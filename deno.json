@@ -1,7 +1,7 @@
 {
   "test": {
     "include": ["**/*.js", "**/*.ts"],
-    "exclude": ["main.js"]
+    "exclude": ["main.js", "game-controller.ts"]
   },
   "tasks": {
     "dev": "deno run --watch main.ts",
