@@ -2,7 +2,7 @@
 
 set -e
 
-# deno task dev-check
+deno task dev-check
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
