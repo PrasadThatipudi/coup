@@ -7,15 +7,23 @@ class Coup {
 
   constructor(players: Player[], deckManager: CardStackManager) {
     this.deckManager = deckManager;
-    this.players = players;
+    this.players = [...players];
   }
 
   private noOfRemainingPlayers(): number {
     return this.players.length;
   }
 
+  rotateTurn() {
+    this.players.push(this.players.shift()!);
+  }
+
   isGameOver(): boolean {
     return this.noOfRemainingPlayers() === 1;
+  }
+
+  currentPlayer() {
+    return this.players[0];
   }
 }
 
