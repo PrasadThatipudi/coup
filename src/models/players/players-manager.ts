@@ -1,17 +1,27 @@
 import Player from "./player.ts";
 
+interface PlayerInfo {
+  player: Player;
+  isEliminated?: boolean;
+}
 export default class PlayersManager {
-  private players: Map<number, Player>;
+  private players: Map<number, PlayerInfo>;
 
-  private constructor(players: Map<number, Player> = new Map()) {
+  private constructor(players: Map<number, PlayerInfo> = new Map()) {
     this.players = players;
   }
 
-  static init(...playerIds: string[]): PlayersManager {
-    const players = new Map<number, Player>();
+  static init(...players: Player[]): PlayersManager {
+    if (players.length < 2) {
+      throw new Error("At least two players must be provided");
+    }
 
-    playerIds.forEach((id, index) => players.set(index, new Player(id)));
+    const playerMap = new Map<number, PlayerInfo>();
 
-    return new PlayersManager(players);
+    players.forEach((player, id) =>
+      playerMap.set(id, { player, isEliminated: false })
+    );
+
+    return new PlayersManager(playerMap);
   }
 }
