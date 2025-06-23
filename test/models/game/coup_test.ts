@@ -1,9 +1,9 @@
 import { describe, it } from "@std/testing/bdd";
 import { assert, assertEquals, assertFalse } from "@std/assert";
-import Coup from "../../src/models/coup.ts";
-import Player from "../../src/models/player.ts";
-import CardStackManager from "../../src/models/card-stack-manager.ts";
-import { Character } from "../../src/models/characters.ts";
+import Coup from "../../../src/models/game/coup.ts";
+import Player from "../../../src/models/players/player.ts";
+import CardStackManager from "../../../src/models/cards/card-stack-manager.ts";
+import { Character } from "../../../src/models/characters/character.ts";
 
 const defaultShuffler = (cards: Character[]): Character[] => {
   return cards;

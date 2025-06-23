@@ -1,5 +1,5 @@
-import CardStackManager from "./card-stack-manager.ts";
-import Player from "./player.ts";
+import CardStackManager from "../cards/card-stack-manager.ts";
+import Player from "../players/player.ts";
 
 class Coup {
   players: Player[];

@@ -1,4 +1,4 @@
-import { Character } from "./characters.ts";
+import { Character } from "../characters/character.ts";
 
 type IdentityFunction = (cards: Character[]) => Character[];
 class CardStackManager {
