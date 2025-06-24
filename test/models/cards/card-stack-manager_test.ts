@@ -15,8 +15,8 @@ describe("shuffleCards", () => {
     const deckManager = new CardStackManager(cards, shuffler);
 
     deckManager.shuffleCards();
-
-    assertEquals(deckManager.cards, cards);
+    assertEquals(deckManager.drawCard(), new Duke(0));
+    assertEquals(deckManager.drawCard(), new Assassin(1));
   });
 });
 
@@ -30,9 +30,9 @@ describe("drawCard", () => {
     ];
     const deckManager = new CardStackManager(cards, shuffler);
 
-    const drawnCard = deckManager.drawCard();
-    assertEquals(drawnCard, new Captain(0));
-    assertEquals(deckManager.cards.length, 2);
+    assertEquals(deckManager.drawCard(), new Captain(0));
+    assertEquals(deckManager.drawCard(), new Contessa(1));
+    assertEquals(deckManager.drawCard(), new Ambassador(2));
   });
 
   it("should return null if the stack is empty", () => {

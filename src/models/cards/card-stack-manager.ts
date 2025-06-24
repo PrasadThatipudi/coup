@@ -2,8 +2,8 @@ import { Character } from "../characters/character.ts";
 
 type IdentityFunction = (cards: Character[]) => Character[];
 class CardStackManager {
-  cards: Character[];
-  shuffler: IdentityFunction;
+  private cards: Character[];
+  private readonly shuffler: IdentityFunction;
 
   constructor(cards: Character[], shuffler: IdentityFunction) {
     this.cards = cards;

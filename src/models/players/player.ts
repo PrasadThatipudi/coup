@@ -1,6 +1,6 @@
 class Player {
-  name: string;
-  coins: number;
+  private readonly name: string;
+  private readonly coins: number;
 
   constructor(name: string) {
     this.name = name;

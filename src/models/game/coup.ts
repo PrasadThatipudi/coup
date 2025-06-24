@@ -2,8 +2,8 @@ import CardStackManager from "../cards/card-stack-manager.ts";
 import Player from "../players/player.ts";
 
 class Coup {
-  players: Player[];
-  deckManager: CardStackManager;
+  private readonly players: Player[];
+  private readonly deckManager: CardStackManager;
 
   constructor(players: Player[], deckManager: CardStackManager) {
     this.deckManager = deckManager;
