@@ -36,6 +36,33 @@ class Coup {
     currentPlayer.addCoins(1);
     this.rotateTurn();
   }
+
+  private isPlayerEligibleToCoup(): boolean {
+    return this.currentPlayer().getCoins() < 7;
+  }
+
+  private isPlayerNominatedSelf(nominatedPlayerName: string): boolean {
+    return this.currentPlayer().name === nominatedPlayerName;
+  }
+
+  coup(playerName: string, characterID: number) {
+    if (
+      this.isPlayerEligibleToCoup() || this.isPlayerNominatedSelf(playerName)
+    ) {
+      return null;
+    }
+
+    const targetPlayer = this.players.find(
+      (player) => player.name === playerName,
+    );
+
+    if (!targetPlayer) return null;
+
+    const discardCard = targetPlayer.discardCard(characterID);
+    if (discardCard) this.rotateTurn();
+
+    return discardCard;
+  }
 }
 
 export default Coup;

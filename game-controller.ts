@@ -10,7 +10,7 @@ import Player from "./src/models/players/player.ts";
 
 const makePlayerChoice = (player: Player): number => {
   const choice = prompt(
-    `It's your turn, ${player.getName()}. \nChoose an action:
+    `It's your turn, ${player.name}. \nChoose an action:
     1. Income
     2. Foreign Aid
     3. Coup
@@ -22,28 +22,23 @@ const makePlayerChoice = (player: Player): number => {
 };
 
 const playAction = (game: Coup, choice: number) => {
-  switch (choice) {
-    case 1:
-      return game.income();
+  if (choice === 1) return game.income();
 
-    case 2:
-      return game.foreignAid();
+  if (choice === 3) {
+    const playerId = prompt("Enter player ID whom you want to coup: ");
+    const characterId = prompt(`${playerId}, enter character ID to discard: `);
 
-    case 3:
-      return game.coup(targetPlayerId);
-
-    case 4:
-      return game.characterAction(character);
+    game.coup(playerId, characterId);
   }
 };
 
 const playGameRound = (game: Coup) => {
   const currentPlayer = game.currentPlayer();
 
-  console.log(`Current Player: ${currentPlayer.getName()}`);
+  console.log(`Current Player: ${currentPlayer.name}`);
   const choice = makePlayerChoice(currentPlayer);
 
-  console.log(`Player ${currentPlayer.getName()} chose: ${choice}`);
+  console.log(`Player ${currentPlayer.name} chose: ${choice}`);
 
   playAction(game, choice);
 };
@@ -63,9 +58,7 @@ const showPlayerCards = (players: Player[]) => {
   players.forEach((player) => {
     const cards = player.getCards();
 
-    console.log(
-      player.getName().concat(": ", cards.map((c) => c.name).join(", ")),
-    );
+    console.log(player.name.concat(": ", cards.map((c) => c.name).join(", ")));
   });
 };
 

@@ -61,6 +61,27 @@ describe("getName", () => {
   it("should return the player's name", () => {
     const player = new Player("Player-1");
 
-    assertEquals(player.getName(), "Player-1");
+    assertEquals(player.name, "Player-1");
+  });
+});
+
+describe("discardCard", () => {
+  it("should return discarded card", () => {
+    const player = new Player("Player-1");
+
+    const card = new Duke(0);
+    player.addCard(card);
+
+    assertEquals(player.discardCard(0), card);
+    assertEquals(player.remainingCards(), 0);
+  });
+
+  it("should return null if there is no card with given ID", () => {
+    const player = new Player("Player-1");
+
+    player.addCard(new Duke(0));
+
+    assertEquals(player.discardCard(1), null);
+    assertEquals(player.remainingCards(), 1);
   });
 });

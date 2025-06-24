@@ -1,9 +1,9 @@
 import { Character } from "../characters/character.ts";
 
 class Player {
-  private readonly name: string;
+  readonly name: string;
   private coins: number;
-  private readonly cards: Character[];
+  private cards: Character[];
 
   constructor(name: string) {
     this.name = name;
@@ -15,16 +15,12 @@ class Player {
     return this.cards.length;
   }
 
-  addCard(drawnCard: Character) {
-    this.cards.push(drawnCard);
+  addCard(card: Character) {
+    this.cards.push(card);
   }
 
   getCards(): Character[] {
     return [...this.cards];
-  }
-
-  getName(): string {
-    return this.name;
   }
 
   getCoins(): number {
@@ -33,6 +29,17 @@ class Player {
 
   addCoins(coins: number) {
     this.coins += coins;
+  }
+
+  discardCard(characterID: number): Character | null {
+    const targetCard = this.cards.find((card) => card.id === characterID) ??
+      null;
+
+    if (targetCard) {
+      this.cards = this.cards.filter((card) => card !== targetCard);
+    }
+
+    return targetCard;
   }
 }
 
