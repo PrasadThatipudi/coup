@@ -99,3 +99,28 @@ describe("distributeCards", () => {
     assertEquals(players[1].getCards(), [new Ambassador(2), new Duke(0)]);
   });
 });
+
+describe("income", () => {
+  it("should add one coin to the current player", () => {
+    const players = [new Player("Player-1")];
+    const deckManager = new CardStackManager([], defaultShuffler);
+    const game = new Coup(players, deckManager);
+
+    game.income();
+
+    assertEquals(players[0].getCoins(), 3);
+  });
+
+  it("should rotate the turn after taking income", () => {
+    const player1 = new Player("Player-1");
+    const player2 = new Player("Player-2");
+
+    const players = [player1, player2];
+    const deckManager = new CardStackManager([], defaultShuffler);
+    const game = new Coup(players, deckManager);
+
+    assertEquals(game.currentPlayer(), player1);
+    game.income();
+    assertEquals(game.currentPlayer(), player2);
+  });
+});

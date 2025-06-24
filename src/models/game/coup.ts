@@ -30,6 +30,12 @@ class Coup {
     this.deckManager.shuffleCards();
     this.deckManager.dealCards(this.players, 2);
   }
+
+  income() {
+    const currentPlayer = this.currentPlayer();
+    currentPlayer.addCoins(1);
+    this.rotateTurn();
+  }
 }
 
 export default Coup;

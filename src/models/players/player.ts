@@ -2,7 +2,7 @@ import { Character } from "../characters/character.ts";
 
 class Player {
   private readonly name: string;
-  private readonly coins: number;
+  private coins: number;
   private readonly cards: Character[];
 
   constructor(name: string) {
@@ -21,6 +21,18 @@ class Player {
 
   getCards(): Character[] {
     return [...this.cards];
+  }
+
+  getName(): string {
+    return this.name;
+  }
+
+  getCoins(): number {
+    return this.coins;
+  }
+
+  addCoins(coins: number) {
+    this.coins += coins;
   }
 }
 

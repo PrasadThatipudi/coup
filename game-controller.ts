@@ -1,22 +1,22 @@
-import CardStackManager from "./src/models/card-stack-manager.ts";
-import {
-  Ambassador,
-  Assassin,
-  Captain,
-  Character,
-  Contessa,
-  Duke,
-} from "./src/models/characters.ts";
-import Coup from "./src/models/coup.ts";
-import Player from "./src/models/player.ts";
+import CardStackManager from "./src/models/cards/card-stack-manager.ts";
+import { Ambassador } from "./src/models/characters/ambassador.ts";
+import { Assassin } from "./src/models/characters/assassin.ts";
+import { Captain } from "./src/models/characters/captain.ts";
+import { Character } from "./src/models/characters/character.ts";
+import { Contessa } from "./src/models/characters/contessa.ts";
+import { Duke } from "./src/models/characters/duke.ts";
+import Coup from "./src/models/game/coup.ts";
+import Player from "./src/models/players/player.ts";
 
 const makePlayerChoice = (player: Player): number => {
-  const choice = prompt(`It's your turn, ${player.name}. \nChoose an action:
+  const choice = prompt(
+    `It's your turn, ${player.getName()}. \nChoose an action:
     1. Income
     2. Foreign Aid
     3. Coup
     4. Character Action
-  Enter the number of your choice: `)?.trim();
+  Enter the number of your choice: `,
+  )?.trim();
 
   return parseInt(choice ?? "") ?? makePlayerChoice(player);
 };
@@ -40,10 +40,10 @@ const playAction = (game: Coup, choice: number) => {
 const playGameRound = (game: Coup) => {
   const currentPlayer = game.currentPlayer();
 
-  console.log(`Current Player: ${currentPlayer.name}`);
+  console.log(`Current Player: ${currentPlayer.getName()}`);
   const choice = makePlayerChoice(currentPlayer);
 
-  console.log(`Player ${currentPlayer.name} chose: ${choice}`);
+  console.log(`Player ${currentPlayer.getName()} chose: ${choice}`);
 
   playAction(game, choice);
 };
@@ -59,10 +59,23 @@ const gameCards = () => [
 const randomShuffler = (cards: Character[]) =>
   cards.sort(() => Math.random() - 0.5);
 
+const showPlayerCards = (players: Player[]) => {
+  players.forEach((player) => {
+    const cards = player.getCards();
+
+    console.log(
+      player.getName().concat(": ", cards.map((c) => c.name).join(", ")),
+    );
+  });
+};
+
 const startGame = (playerIds: string[]) => {
   const players = playerIds.map((id) => new Player(id));
   const deckManager = new CardStackManager(gameCards(), randomShuffler);
   const game = new Coup(players, deckManager);
+
+  game.distributeCards();
+  showPlayerCards(players);
 
   while (!game.isGameOver()) {
     playGameRound(game);

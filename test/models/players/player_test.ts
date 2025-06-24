@@ -46,3 +46,21 @@ describe("getCards", () => {
     assertEquals(player.getCards(), [new Duke(0), new Duke(1)]); // Original cards should remain unchanged
   });
 });
+
+describe("addCoins", () => {
+  it("should add given no of coins to player", () => {
+    const player = new Player("Player-1");
+
+    player.addCoins(1);
+
+    assertEquals(player.getCoins(), 3); // 2 coins by default + added coins
+  });
+});
+
+describe("getName", () => {
+  it("should return the player's name", () => {
+    const player = new Player("Player-1");
+
+    assertEquals(player.getName(), "Player-1");
+  });
+});
