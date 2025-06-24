@@ -1,5 +1,5 @@
 import { describe, it } from "@std/testing/bdd";
-import { assert, assertEquals, assertFalse } from "@std/assert";
+import { assert, assertEquals, assertFalse, assertThrows } from "@std/assert";
 import Coup from "../../../src/models/game/coup.ts";
 import Player from "../../../src/models/players/player.ts";
 import CardStackManager from "../../../src/models/cards/card-stack-manager.ts";
@@ -13,17 +13,39 @@ const defaultShuffler = (cards: Character[]): Character[] => {
   return cards;
 };
 
+const createPlayers = (noOfPlayers: number) =>
+  Array.from({ length: noOfPlayers }, (_, i) => new Player(`Player-${i + 1}`));
+
+describe("init", () => {
+  it("should return throw an error when no of players are less than 2", () => {
+    const players = createPlayers(1);
+    const cards = Array.from({ length: 2 }, (_, i) => new Duke(i));
+    const deckManager = new CardStackManager(cards, defaultShuffler);
+
+    assertThrows(() => Coup.init(players, deckManager));
+  });
+
+  it("should return coup instance when there are enough players", () => {
+    const players = createPlayers(2);
+    const cards = Array.from({ length: 2 }, (_, i) => new Duke(i));
+    const deckManager = new CardStackManager(cards, defaultShuffler);
+
+    assert(Coup.init(players, deckManager) instanceof Coup);
+  });
+});
+
 describe("isGameOver", () => {
   it("should return false when there are still players with cards", () => {
-    const players = [new Player("Player-1"), new Player("Player-2")];
+    const players = createPlayers(2);
     const deckManager = new CardStackManager([], defaultShuffler);
-    const game = new Coup(players, deckManager);
+    const game = Coup.init(players, deckManager);
 
     assertFalse(game.isGameOver());
   });
 
+  // Not accurate enough
   it("should return true when all players have lost their cards", () => {
-    const players = [new Player("Player-1")];
+    const players = createPlayers(1);
     const deckManager = new CardStackManager([], defaultShuffler);
 
     const game = new Coup(players, deckManager);
@@ -34,17 +56,17 @@ describe("isGameOver", () => {
 
 describe("currentPlayer", () => {
   it("should return the current player", () => {
-    const players = [new Player("Player-1"), new Player("Player-2")];
+    const players = createPlayers(2);
     const deckManager = new CardStackManager([], defaultShuffler);
-    const game = new Coup(players, deckManager);
+    const game = Coup.init(players, deckManager);
 
     assertEquals(game.currentPlayer(), players[0]);
   });
 
   it("should return the second player when the first has done with his turn", () => {
-    const players = [new Player("Player-1"), new Player("Player-2")];
+    const players = createPlayers(2);
     const deckManager = new CardStackManager([], defaultShuffler);
-    const game = new Coup(players, deckManager);
+    const game = Coup.init(players, deckManager);
 
     game.rotateTurn();
 
@@ -54,9 +76,9 @@ describe("currentPlayer", () => {
 
 describe("rotateTurn", () => {
   it("should rotate to the next player", () => {
-    const players = [new Player("Player-1"), new Player("Player-2")];
+    const players = createPlayers(2);
     const deckManager = new CardStackManager([], defaultShuffler);
-    const game = new Coup(players, deckManager);
+    const game = Coup.init(players, deckManager);
 
     game.rotateTurn();
 
@@ -64,9 +86,9 @@ describe("rotateTurn", () => {
   });
 
   it("should rotate back to the first player after the last player", () => {
-    const players = [new Player("Player-1"), new Player("Player-2")];
+    const players = createPlayers(2);
     const deckManager = new CardStackManager([], defaultShuffler);
-    const game = new Coup(players, deckManager);
+    const game = Coup.init(players, deckManager);
 
     game.rotateTurn(); // to Player-2
     game.rotateTurn(); // back to Player-1
@@ -87,9 +109,9 @@ describe("distributeCards", () => {
       new Assassin(3),
     ];
 
-    const players = [new Player("Player-1"), new Player("Player-2")];
+    const players = createPlayers(2);
     const deckManager = new CardStackManager(cards, reverseShuffler);
-    const game = new Coup(players, deckManager);
+    const game = Coup.init(players, deckManager);
 
     game.distributeCards();
 
@@ -102,9 +124,9 @@ describe("distributeCards", () => {
 
 describe("income", () => {
   it("should add one coin to the current player", () => {
-    const players = [new Player("Player-1")];
+    const players = createPlayers(2);
     const deckManager = new CardStackManager([], defaultShuffler);
-    const game = new Coup(players, deckManager);
+    const game = Coup.init(players, deckManager);
 
     game.income();
 
@@ -112,34 +134,23 @@ describe("income", () => {
   });
 
   it("should rotate the turn after taking income", () => {
-    const player1 = new Player("Player-1");
-    const player2 = new Player("Player-2");
-
-    const players = [player1, player2];
+    const players = createPlayers(2);
     const deckManager = new CardStackManager([], defaultShuffler);
-    const game = new Coup(players, deckManager);
+    const game = Coup.init(players, deckManager);
 
-    assertEquals(game.currentPlayer(), player1);
+    assertEquals(game.currentPlayer(), players[0]);
     game.income();
-    assertEquals(game.currentPlayer(), player2);
+    assertEquals(game.currentPlayer(), players[1]);
   });
 });
 
 describe("coup", () => {
   it("should return null if player doesn't have 7 coins", () => {
-    const player1 = new Player("Player-1");
-    const player2 = new Player("Player-2");
-
-    const players = [player1, player2];
-    const cards = [
-      new Duke(0),
-      new Contessa(1),
-      new Ambassador(2),
-      new Assassin(3),
-    ];
+    const players = createPlayers(2);
+    const cards = Array.from({ length: 6 }, (_, i) => new Duke(i));
 
     const deckManager = new CardStackManager(cards, defaultShuffler);
-    const game = new Coup(players, deckManager);
+    const game = Coup.init(players, deckManager);
 
     game.distributeCards();
 
@@ -147,44 +158,29 @@ describe("coup", () => {
   });
 
   it("player has 7 coins | should return discarded character card", () => {
-    const player1 = new Player("Player-1");
-    const player2 = new Player("Player-2");
+    const players = createPlayers(2);
 
-    player1.addCoins(7);
-    player2.addCoins(7);
+    players[0].addCoins(7);
+    players[1].addCoins(7);
 
-    const players = [player1, player2];
-    const cards = [
-      new Duke(0),
-      new Contessa(1),
-      new Ambassador(2),
-      new Assassin(3),
-    ];
+    const cards = Array.from({ length: 6 }, (_, i) => new Duke(i));
     const deckManager = new CardStackManager(cards, defaultShuffler);
-    const game = new Coup(players, deckManager);
+    const game = Coup.init(players, deckManager);
 
     game.distributeCards();
 
-    assertEquals(game.coup("Player-2", 1), new Contessa(1));
-    assertEquals(player2.remainingCards(), 1);
+    assertEquals(game.coup("Player-2", 1), new Duke(1));
+    assertEquals(players[1].remainingCards(), 1);
   });
 
-  it("should return null | player ID is current player ID", () => {
-    const player1 = new Player("Player-1");
-    const player2 = new Player("Player-2");
+  it("should return null when player couping self", () => {
+    const players = createPlayers(2);
+    const cards = Array.from({ length: 6 }, (_, i) => new Duke(i));
 
-    const players = [player1, player2];
-    const cards = [
-      new Duke(0),
-      new Contessa(1),
-      new Ambassador(2),
-      new Assassin(3),
-    ];
-
-    player1.addCoins(7);
+    players[0].addCoins(7);
 
     const deckManager = new CardStackManager(cards, defaultShuffler);
-    const game = new Coup(players, deckManager);
+    const game = Coup.init(players, deckManager);
 
     game.distributeCards();
 
@@ -192,56 +188,43 @@ describe("coup", () => {
   });
 
   it("should rotate turn on a successful coup", () => {
-    const player1 = new Player("Player-1");
-    const player2 = new Player("Player-2");
+    const players = createPlayers(2);
+    players[0].addCoins(7);
 
-    player1.addCoins(7);
-
-    const players = [player1, player2];
-    const cards = [
-      new Duke(0),
-      new Contessa(1),
-      new Ambassador(2),
-      new Assassin(3),
-    ];
+    const cards = Array.from({ length: 6 }, (_, i) => new Duke(i));
     const deckManager = new CardStackManager(cards, defaultShuffler);
-    const game = new Coup(players, deckManager);
+    const game = Coup.init(players, deckManager);
 
     game.distributeCards();
 
-    assertEquals(game.coup("Player-2", 1), new Contessa(1));
-    assertEquals(player2.remainingCards(), 1);
-    assertEquals(game.currentPlayer(), player2);
+    assertEquals(game.coup("Player-2", 1), new Duke(1));
+    assertEquals(players[1].remainingCards(), 1);
+    assertEquals(game.currentPlayer(), players[1]);
   });
 
   it("should current player able to coup third player", () => {
-    const player1 = new Player("Player-1");
-    const player2 = new Player("Player-2");
-    const player3 = new Player("Player-3");
+    const players = createPlayers(3);
 
-    player1.addCoins(7);
+    players[0].addCoins(7);
 
-    const players = [player1, player2, player3];
     const cards = Array.from({ length: 6 }, (_, i) => new Duke(i));
     const deckManager = new CardStackManager(cards, defaultShuffler);
-    const game = new Coup(players, deckManager);
+    const game = Coup.init(players, deckManager);
 
     game.distributeCards();
 
     assertEquals(game.coup("Player-3", 2), new Duke(2));
-    assertEquals(player3.remainingCards(), 1);
+    assertEquals(players[2].remainingCards(), 1);
   });
 
   it("should return null if target player is not exist", () => {
-    const player1 = new Player("Player-1");
-    const player2 = new Player("Player-2");
+    const players = createPlayers(2);
 
-    player1.addCoins(7);
+    players[0].addCoins(7);
 
-    const players = [player1, player2];
     const cards = Array.from({ length: 6 }, (_, i) => new Duke(i));
     const deckManager = new CardStackManager(cards, defaultShuffler);
-    const game = new Coup(players, deckManager);
+    const game = Coup.init(players, deckManager);
 
     game.distributeCards();
 

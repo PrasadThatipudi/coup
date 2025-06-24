@@ -10,6 +10,18 @@ class Coup {
     this.players = [...players];
   }
 
+  private static arePlayersEnoughToPlay(players: Player[]) {
+    return players.length >= 2;
+  }
+
+  static init(players: Player[], deckManager: CardStackManager): Coup {
+    if (this.arePlayersEnoughToPlay(players)) {
+      return new Coup(players, deckManager);
+    }
+
+    throw new Error("Not enough players to play!");
+  }
+
   private noOfRemainingPlayers(): number {
     return this.players.length;
   }
