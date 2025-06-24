@@ -25,6 +25,11 @@ class Coup {
   currentPlayer() {
     return this.players[0];
   }
+
+  distributeCards() {
+    this.deckManager.shuffleCards();
+    this.deckManager.dealCards(this.players, 2);
+  }
 }
 
 export default Coup;

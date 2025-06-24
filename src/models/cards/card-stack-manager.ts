@@ -1,4 +1,5 @@
 import { Character } from "../characters/character.ts";
+import Player from "../players/player.ts";
 
 type IdentityFunction = (cards: Character[]) => Character[];
 class CardStackManager {
@@ -21,6 +22,17 @@ class CardStackManager {
 
     const drawnCard = this.cards.shift()!;
     return drawnCard;
+  }
+
+  dealCards(players: Player[], noOfCards: number) {
+    Array.from({ length: noOfCards }).forEach(() => {
+      players.forEach((player) => {
+        const drawnCard = this.drawCard();
+        if (drawnCard) {
+          player.addCard(drawnCard);
+        }
+      });
+    });
   }
 }
 
